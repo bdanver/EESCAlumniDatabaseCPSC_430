@@ -25,4 +25,11 @@ router.delete('/:id', (req, res) => {
     .catch(err => res.status(400).json('Error: ' + err))
 })
 
+router.put('/:id', (req, res) => {
+  const username = req.body.username; 
+  User.findByIdAndUpdate(req.params.id, {$set: username}, {new: true})
+    .then(user => res.json("User edited."))
+    .catch(err => res.status(400).json('Error: ' + err))
+})
+
 module.exports = router;

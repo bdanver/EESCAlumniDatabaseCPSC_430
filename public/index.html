@@ -23,6 +23,12 @@
                         <h2>{{user.username}}</h2>
                         <p>Created on: {{user.createdAt}}</p>
                         <button v-on:click.prevent="deleteUser(user)" class="btn btn-danger btn-sm">Delete</button>
+
+                        <!-- the problem could be here -->
+                        <button v-on:click.prevent="editUser(user)" id="editButton" class="btn btn-secondary btn-sm">Edit</button>
+                        <input type="text" class="form-control" v-model="userInput" placeholder="Edit user">
+
+                      </div>
                     </li>
                 </ul>
                 <br>
@@ -34,7 +40,6 @@
                 <div class="form-group">
                     <input type="text" class="form-control" v-model="username" placeholder="New user">
                 </div>
-
                 <button v-on:click.prevent="addUser" class="btn btn-primary">Add User</button>
             </form>
         </div>
@@ -63,6 +68,7 @@
             message: 'Hello Vue!',
             username: "",
             users: [],
+            userInput: "",
         },
 
         created: function () {
@@ -96,7 +102,19 @@
                 }).then(response => {
                     location.reload();
                 }).catch(err => console.log(err.message))
-            }
+            },
+            editUser: function (user) {
+                let userId = user._id
+                axios({
+                    method: "put",
+                    url: `/users/${userId}`,
+                    data: {
+                        userInput: this.userInput //the problem might be here 
+                    }
+                }).then(response => {
+                    location.reload();
+                }).catch(err => console.log(err.message))
+            },
         }
     })
 </script>
