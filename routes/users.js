@@ -25,11 +25,16 @@ router.delete('/:id', (req, res) => {
     .catch(err => res.status(400).json('Error: ' + err))
 })
 
-router.put('/:id', (req, res) => {
-  const username = req.body.username; 
-  User.findByIdAndUpdate(req.params.id, {$set: username}, {new: true})
-    .then(user => res.json("User edited."))
-    .catch(err => res.status(400).json('Error: ' + err))
+router.post('/edit/:id', (req,res) => {
+  User.findByIdAndUpdate(req.params.id, {username: req.body.newUsername},{upsert: true}, function(err, docs){
+   if (err){ 
+     console.log(err) 
+ } 
+ else{ 
+   res.sendStatus(200)
+     console.log("Updated User : ", docs); 
+ } 
+  })
 })
 
 module.exports = router;

@@ -22,13 +22,15 @@
                     <li class="list-group-item" v-for="user in users" :key="user.id">
                         <h2>{{user.username}}</h2>
                         <p>Created on: {{user.createdAt}}</p>
+                        <form v-if="editing" class="mb-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" v-model="newUsername" placeholder="New username">
+                            </div>           
+                            <button v-on:click.prevent="editUser(user)" class="btn btn-primary">Submit Changes</button>
+                            <button v-on:click.prevent="cancelEdit" class="btn btn-primary">cancel</button>
+                        </form>
                         <button v-on:click.prevent="deleteUser(user)" class="btn btn-danger btn-sm">Delete</button>
-
-                        <!-- the problem could be here -->
-                        <button v-on:click.prevent="editUser(user)" id="editButton" class="btn btn-secondary btn-sm">Edit</button>
-                        <input type="text" class="form-control" v-model="userInput" placeholder="Edit user">
-
-                      </div>
+                        <button v-on:click.prevent="editing = true" class="btn btn-primary btn-sm">Edit</button>
                     </li>
                 </ul>
                 <br>
@@ -40,8 +42,10 @@
                 <div class="form-group">
                     <input type="text" class="form-control" v-model="username" placeholder="New user">
                 </div>
+
                 <button v-on:click.prevent="addUser" class="btn btn-primary">Add User</button>
             </form>
+            
         </div>
     </div>
 
@@ -67,8 +71,9 @@
         data: {
             message: 'Hello Vue!',
             username: "",
+            newUsername: "",
             users: [],
-            userInput: "",
+            editing: false
         },
 
         created: function () {
@@ -103,18 +108,23 @@
                     location.reload();
                 }).catch(err => console.log(err.message))
             },
-            editUser: function (user) {
+            cancelEdit: function() {
+                this.editing = false
+                this.newUsername = ""
+            },
+            editUser: function(user) {
                 let userId = user._id
                 axios({
-                    method: "put",
-                    url: `/users/${userId}`,
+                    method: "post",
+                    url: `/users/edit/${userId}`,
                     data: {
-                        userInput: this.userInput //the problem might be here 
+                        newUsername: this.newUsername
                     }
                 }).then(response => {
                     location.reload();
+                    console.log(response)
                 }).catch(err => console.log(err.message))
-            },
+            }
         }
     })
 </script>
